@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Banking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+        header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+        main {
+            padding: 20px;
+        }
+        section {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #007bff;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* New styles for recharge section */
+        #recharge-funds {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>E-Banking</h1>
+        <nav>
+            <ul>
+                <li><a href="#" onclick="showAccountSummary()">Home</a></li>
+                <li><a href="#" onclick="showRechargeForm()">Recharge</a></li>
+                <li><a href="#" onclick="showTransferForm()">Transfers</a></li>
+                <li><a href="#" onclick="showPayments()">Payments</a></li>
+                <li><a href="#" onclick="showSettings()">Settings</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <section id="login">
+            <h2>Login</h2>
+            <form id="login-form" onsubmit="login(event)">
+                <label for="login-email">Email:</label>
+                <input type="email" name="login-email" id="login-email" required><br>
+                <label for="login-password">Password:</label>
+                <input type="password" name="login-password" id="login-password" required><br>
+                <button type="submit">Login</button>
+            </form>
+        </section>
+
+        <section id="create-account">
+            <h2>Create Account</h2>
+            <form id="create-account-form" onsubmit="createAccount(event)">
+                <label for="name">Name:</label>
+                <input type="text" name="name" id="name" required><br>
+                <label for="email">Email:</label>
+                <input type="email" name="email" id="email" required><br>
+                <label for="password">Password:</label>
+                <input type="password" name="password" id="password" required><br>
+                <button type="submit">Create Account</button>
+            </form>
+        </section>
+
+        <section id="account-summary" style="display: none;">
+            <h2>Account Summary</h2>
+            <ul>
+                <li id="account-number">Account Number: XXXX-XXXX-XXXX-1234</li>
+                <li id="balance">Balance: $1000.00</li>
+                <!-- Add more account details here -->
+            </ul>
+        </section>
+
+        <section id="transfer-funds" style="display: none;">
+            <h2>Transfer Funds</h2>
+            <form id="transfer-form">
+                <label for="to-account">To Account:</label>
+                <input type="text" name="to-account" id="to-account"><br>
+                <label for="amount">Amount:</label>
+                <input type="text" name="amount" id="amount"><br>
+                <button type="button" onclick="transferFunds()">Transfer</button>
+            </form>
+        </section>
+
+        <!-- New recharge section -->
+        <section id="recharge-funds" style="display: none;">
+            <h2>Recharge Funds</h2>
+            <form id="recharge-form" onsubmit="rechargeFunds(event)">
+                <label for="recharge-amount">Amount:</label>
+                <input type="text" name="recharge-amount" id="recharge-amount" required><br>
+                <button type="submit">Recharge</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 E-Banking. All rights reserved.</p>
+    </footer>
+
+    <script>
+        var currentUser = null;
+        var accounts = [];
+
+        function login(event) {
+            event.preventDefault(); // Prevent form submission
+
+            var email = document.getElementById("login-email").value;
+            var password = document.getElementById("login-password").value;
+
+            // Simulate authentication
+            // You would replace this with server-side authentication
+            currentUser = { email: email, password: password };
+
+            if (currentUser) {
+                alert("Login successful!");
+                showAccountSummary();
+            } else {
+                alert("Invalid email or password. Please try again.");
+            }
+        }
+
+        function createAccount(event) {
+            event.preventDefault(); // Prevent form submission
+
+            var name = document.getElementById("name").value;
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+
+            // Create user object
+            var user = {
+                name: name,
+                email: email,
+                password: password,
+                balance: 0 // Initialize balance for new accounts
+            };
+
+            // Store user in database (in this case, an array)
+            // You would usually send this data to a server to store in a database
+            accounts.push(user);
+
+            // Optionally, you can clear the form fields after submission
+            document.getElementById("create-account-form").reset();
+
+            // Inform user that account has been created
+            alert("Account created successfully!");
+        }
+
+        function showAccountSummary() {
+            document.getElementById("login").style.display = "none";
+            document.getElementById("create-account").style.display = "none";
+            document.getElementById("account-summary").style.display = "block";
+            document.getElementById("transfer-funds").style.display = "block";
+            document.getElementById("recharge-funds").style.display = "none";
+
+            // Fetch account information from the server and display it here
+            // For demonstration, let's assume the account info is already available
+            var account = accounts.find(acc => acc.email === currentUser.email);
+            document.getElementById("account-number").innerText = "Account Number: " + account.accountNumber;
+            document.getElementById("balance").innerText = "Balance: $" + account.balance.toFixed(2);
+        }
+
+        function showRechargeForm() {
+            document.getElementById("recharge-funds").style.display = "block";
+            document.getElementById("login").style.display = "none";
+            document.getElementById("create-account").style.display = "none";
+            document.getElementById("account-summary").style.display = "none";
+            document.getElementById("transfer-funds").style.display = "none";
+        }
+
+        function rechargeFunds(event) {
+            event.preventDefault(); // Prevent form submission
+
+            var amount = parseFloat(document.getElementById("recharge-amount").value);
+
+            if (isNaN(amount) || amount <= 0) {
+                alert("Please enter a valid amount to recharge.");
+                return;
+            }
+
+            // Simulate recharge process
+            // You would typically make an API call to the server to recharge the account
+            var account = accounts.find(acc => acc.email === currentUser.email);
+            if (account) {
+                account.balance += amount;
+                alert("Funds recharged successfully!");
+                // Update account summary after recharge
+                document.getElementById("balance").innerText = "Balance: $" + account.balance.toFixed(2);
+                document.getElementById("recharge-form").reset(); // Reset the form after successful recharge
+            } else {
+                alert("Account not found. Please log in again.");
+            }
+        }
+
+        function transferFunds() {
+            if (!currentUser) {
+                alert("Please login first!");
+                return;
+            }
+
+            var toAccount = document.getElementById("to-account").value;
+            var amount = parseFloat(document.getElementById("amount").value);
+
+            if (!toAccount || isNaN(amount) || amount <= 0) {
+                alert("Please enter a valid account number and amount.");
+                return;
+            }
+
+            // Simulate money transfer
+            // You would typically make an API call to the server to perform the transfer
+            var senderAccount = accounts.find(acc => acc.email === currentUser.email);
+            var receiverAccount = accounts.find(acc => acc.accountNumber === toAccount);
+
+            if (senderAccount && receiverAccount && amount <= senderAccount.balance) {
+                senderAccount.balance -= amount; // Deduct amount from sender's account
+                receiverAccount.balance += amount; // Add amount to receiver's account
+                alert("Funds transferred successfully!");
+
+                // Update sender's account summary after transfer
+                document.getElementById("balance").innerText = "Balance: $" + senderAccount.balance.toFixed(2);
+            } else {
+                if (!senderAccount) {
+                    alert("Sender's account not found!");
+                } else if (!receiverAccount) {
+                    alert("Receiver's account not found!");
+                } else {
+                    alert("Insufficient funds!");
+                }
+            }
+        }
+
+        // Other functions remain unchanged
+
+    </script>
+</body>
+</html>
